@@ -6,8 +6,8 @@ library(ape)
 
 # 设置工作目录
 setwd("/mnt/d/幽门螺旋杆菌/Script/分析结果/5-ggtree")
-Input_tree <- './data/Core_CDS_concat.aln.snp-sites.tree'
-Output_tree <- './data/Core_CDS_concat.aln.snp-sites.rooted.tree'
+Input_tree <- './data/东亚高地和低地_VeryFastTree.tree'
+Output_tree <- './data/东亚高地和低地_VeryFastTree.rooted.tree'
 # 1. 数据加载步骤
 # 加载系统发生树文件(WGS)
 WGS_tree <- read.tree(Input_tree)

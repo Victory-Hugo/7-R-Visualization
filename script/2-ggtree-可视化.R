@@ -7,14 +7,12 @@ library(ggsci)
 # 设置工作目录
 setwd("/mnt/d/幽门螺旋杆菌/Script/分析结果/5-ggtree")
 # 加载系统发生树文件(WGS)
-WGS_tree <- read.tree("./data/WGS.aln.snp-sites.rooted.tree")
-
-
+WGS_tree <- read.tree("./data/东亚高地和低地_VeryFastTree.rooted_normal_branch.tree")
 
 ##* 分支着色
 # 文件路径可按需修改
-group_file <- "./conf/group.txt"
-color_file <- "./conf/color.txt"
+group_file <- "./conf/group.txt" #todo 第一列是label，第二列是group，不包含表头
+color_file <- "./conf/color.txt" #todo 第一列是group，第二列是color，不包含表头
 
 # 读取分组信息
 group_df <- read.table(group_file, header = FALSE, sep = "\t", stringsAsFactors = FALSE, col.names = c("label", "group"))
@@ -28,7 +26,7 @@ group_colors <- setNames(color_df$color, color_df$group) # 将颜色信息转换
 tree_grouped <- groupOTU(WGS_tree, group_list)
 
 # 绘制系统发育树
-p0 <- ggtree(tree_grouped, aes(color = group), layout = 'fan',open.angle = 5, lwd = 0.15) +
+p0 <-ggtree(tree_grouped, aes(color = group), layout = 'fan',open.angle = 5, lwd = 0.25) +
   scale_color_manual(values = group_colors)
 
 
@@ -47,8 +45,13 @@ full_join(tree_grouped_S4, df_META, by = c("label" = "ID")) -> tree_grouped_S4_M
 # #! 旋转之前一定加上ggtree::flip()，不然会和ape包的flip()函数冲突
 # ggtree::flip(p0,7594,9269) -> p1
 
+# 挑选df_META中Province为空的行，将其的Country内容填充到Province列
+n_provinces <- length(unique(df_META$Province))
+# 使用colorRampPalette生成足够的颜色
+province_colors <- colorRampPalette(RColorBrewer::brewer.pal(12, "Set3"))(n_provinces)
 
-p0 +  
+
+p2 <- p0 +  
 new_scale_fill() +
     geom_fruit(
     data = filter(df_META,Species != 'H. pylori'),
@@ -69,10 +72,10 @@ new_scale_fill() +
     geom_fruit(
     data = filter(df_META),
     geom = geom_tile,
-    mapping = aes(y = ID ,fill = Continent),
+    mapping = aes(y = ID ,fill = Province),
     width = 0.01,
     offset = -0.02
-    ) + scale_fill_brewer(palette = "Set3") +  # Nature期刊配色 
+    ) + scale_fill_manual(values = province_colors) +
 new_scale_fill() +
     geom_fruit(
     data = filter(df_META),
@@ -80,7 +83,7 @@ new_scale_fill() +
     mapping = aes(y = ID ,fill =Elevation),
     width = 0.01,
     offset = 0.03
-    )+ scale_fill_gradient(low = "#FAC1C8", high = "#740808") +
+    )+ scale_fill_gradient(low = "#FAC1C8", high = "#740808") 
 new_scale_fill() +
     geom_fruit(
     data = filter(df_META),
@@ -96,6 +99,6 @@ new_scale_fill() +
     mapping = aes(y = ID ,fill =Longitude),
     width = 0.01,
     offset = 0.03
-    ) + scale_fill_gradient(low = "#C5E1F7", high = "#041734") -> p2
-ggsave(p2,filename = './output/WGS.aln.snp-sites.rooted.tree.fan.tif',height = 10,width = 15,dpi = 300)
+    ) + scale_fill_gradient(low = "#C5E1F7", high = "#041734") 
+ggsave(p2,filename = './output/东亚高地和低地_VeryFastTree.rooted_normal_branch.fan.pdf',height = 10,width = 15)
 
