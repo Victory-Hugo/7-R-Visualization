@@ -1,6 +1,5 @@
 library(ggtree)
 library(treeio)
-library(ape)
 library(tidyverse)
 library(ggtreeExtra)
 library(ggnewscale)
@@ -32,24 +31,38 @@ tree_grouped <- groupOTU(WGS_tree, group_list)
 p0 <- ggtree(tree_grouped, aes(color = group), layout = 'fan',open.angle = 5, lwd = 0.15) +
   scale_color_manual(values = group_colors)
 
+
 ##* 使用ggtreeExtra美化
 # 首先读取meta信息文件
 meta_file <- "./conf/HP数据收集2.xlsx"
 df_META <- readxl::read_excel(meta_file, sheet = 'HP数据收集')
+tree_grouped |> as.treedata() -> tree_grouped_S4
+# 将df_META和tree_grouped_S4结合
+full_join(tree_grouped_S4, df_META, by = c("label" = "ID")) -> tree_grouped_S4_META
+# 将高海拔菌株和低海拔菌株的MRCA旋转一下更美观
+# #* 采用flip方法交换2个节点的位置。
+# #* 首先找到高低的MRCA节点
+# tree_grouped_S4 |> MRCA("HEL_CA3369AA_AS","HEL_CA2296AA_AS") -> MRCA_node
+# tree_grouped_S4 |> child(MRCA_node) # 输出结果是7594 9269
+# #! 旋转之前一定加上ggtree::flip()，不然会和ape包的flip()函数冲突
+# ggtree::flip(p0,7594,9269) -> p1
+
 
 p0 +  
 new_scale_fill() +
     geom_fruit(
     data = filter(df_META,Species != 'H. pylori'),
     geom = geom_point,
-    mapping = aes(y = ID ,color =group, shape = Species),
+    mapping = aes(y = ID ,color =Species, shape = Species),
+    size = 1,
     position = "identity" #!重要参数，保证了位置恰好在树的分支末端
     ) +  
 new_scale_fill() +
     geom_fruit(
     data = filter(df_META,Ecotype != 'Ubiquitous'),
     geom = geom_point,
-    mapping = aes(y = ID ,color =group, shape = Ecotype),
+    mapping = aes(y = ID ,color =Ecotype, shape = Ecotype),
+    size = 1,
     position = "identity" #!重要参数，保证了位置恰好在树的分支末端
     ) +  
 new_scale_fill() +
@@ -84,4 +97,5 @@ new_scale_fill() +
     width = 0.01,
     offset = 0.03
     ) + scale_fill_gradient(low = "#C5E1F7", high = "#041734") -> p2
-ggsave(p2,filename = './output/WGS.aln.snp-sites.rooted.tree.fan.pdf')
+ggsave(p2,filename = './output/WGS.aln.snp-sites.rooted.tree.fan.tif',height = 10,width = 15,dpi = 300)
+

@@ -6,10 +6,11 @@ library(ape)
 
 # 设置工作目录
 setwd("/mnt/d/幽门螺旋杆菌/Script/分析结果/5-ggtree")
-
+Input_tree <- './data/Core_CDS_concat.aln.snp-sites.tree'
+Output_tree <- './data/Core_CDS_concat.aln.snp-sites.rooted.tree'
 # 1. 数据加载步骤
 # 加载系统发生树文件(WGS)
-WGS_tree <- read.tree("./data/WGS.aln.snp-sites.tree")
+WGS_tree <- read.tree(Input_tree)
 
 # 加载元数据
 df_META <- readxl::read_excel("./conf/HP数据收集2.xlsx", sheet = 'HP数据收集')
@@ -43,7 +44,9 @@ rooted_phylo <- GWS_tree_META |>
 
 # 4. 将根化后的树导出为新的Newick文件
 # 导出为Newick格式
-write.tree(rooted_phylo, file = "./data/WGS.aln.snp-sites.rooted.tree")
+write.tree(rooted_phylo, file = Output_tree)
 
 # 打印确认信息
-cat("根化后的树已导出为 ./data/WGS.aln.snp-sites.rooted.tree\n")
+cat("根化后的树已导出\n")
+
+
