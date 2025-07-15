@@ -1,16 +1,21 @@
 # 代码一
-# 加载R包，没有安装请先安装  install.packages("包名") 
 library(venn)         #韦恩图（venn 包，适用样本数 2-7）
 library(VennDiagram) 
 
 # 读取数据文件
-venn_dat <- read.delim('/mnt/d/幽门螺旋杆菌/Script/分析结果/2-变异统计/output/venn_counts.csv',sep = ',') # 每一列是一个集合,可以是一列数字，也可以是一列字符
-venn_list <- list(venn_dat[,1], venn_dat[,2],venn_dat[,3])   # 制作韦恩图搜所需要的列表文件
-names(venn_list) <- colnames(venn_dat[1:3])    # 把列名赋值给列表的key值
+venn_dat <- read.delim('/mnt/d/幽门螺旋杆菌/Script/分析结果/2-变异统计/output/粗分venn_counts.csv',sep = ',') # 每一列是一个集合,可以是一列数字，也可以是一列字符
+number_set <- 5 #todo 输入共有多少列，即多少种集合
+
+# 动态生成venn_list
+venn_list <- lapply(1:number_set, function(i) venn_dat[,i])    # 使用lapply动态生成列表
+names(venn_list) <- colnames(venn_dat)[1:number_set]           # 动态获取对应数量的列名
 venn_list = purrr::map(venn_list,na.omit)      # 删除列表中每个向量中的NA
 
 #作图
 # 直接用 ilabels = "counts" 自动显示每个区域的计数
+dev.off() # 关闭之前的图形设备
+# 如果没有图形设备打开，可以忽略此行
+pdf("venn_plot.pdf", width = 10, height = 10) # 保存为PDF文件
 venn(
   x       = venn_list,
   zcolor  = 'style',       # 预设配色
@@ -21,6 +26,10 @@ venn(
   sncs    = 1.0,            # 集合名称大小
   plotsize = 15
 )
+# 保存图形
+dev.off() # 关闭图形设备
+
+
 #?venn
 # 更多参数 ?venn查看
 
