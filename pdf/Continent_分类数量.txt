@@ -1,0 +1,12 @@
+	Number
+Europe	2223
+East_Asia	2150
+America	1516
+Southeast_Asia	1339
+South_Asia	792
+Oceania	552
+Africa	544
+Asia	401
+Central_Asia	123
+North_America	17
+Other	15

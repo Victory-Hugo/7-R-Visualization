@@ -1,0 +1,12 @@
+	Number
+China	1437
+Japan	600
+Vietnam	575
+Germany	540
+Australia	506
+Bhutan	455
+Russia	401
+Colombia	347
+Thailand	336
+United_States	313
+Other	4134
