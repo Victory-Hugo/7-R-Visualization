@@ -11,8 +11,8 @@ WGS_tree <- read.tree("./data/东亚高地和低地_VeryFastTree.rooted_normal_b
 
 ##* 分支着色
 # 文件路径可按需修改
-group_file <- "./conf/group.txt" #todo 第一列是label，第二列是group，不包含表头
-color_file <- "./conf/color.txt" #todo 第一列是group，第二列是color，不包含表头
+group_file <- "./conf/group.txt" #todo 第一列是label(ID)，第二列是group(单倍群)，不包含表头
+color_file <- "./conf/color.txt" #todo 第一列是group(单倍群)，第二列是color，不包含表头
 
 # 读取分组信息
 group_df <- read.table(group_file, header = FALSE, sep = "\t", stringsAsFactors = FALSE, col.names = c("label", "group"))
@@ -29,6 +29,7 @@ tree_grouped <- groupOTU(WGS_tree, group_list)
 p0 <-ggtree(tree_grouped, aes(color = group), layout = 'fan',open.angle = 5, lwd = 0.25) +
   scale_color_manual(values = group_colors)
 
+#*===================================================================================
 
 ##* 使用ggtreeExtra美化
 # 首先读取meta信息文件
