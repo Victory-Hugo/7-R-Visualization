@@ -10,7 +10,3 @@
 # nohup 默认会生成的输出文件
 nohup.out
 
-# 忽略./pdf/ 和./output/ 
-/pdf/
-/output/
-/data/
