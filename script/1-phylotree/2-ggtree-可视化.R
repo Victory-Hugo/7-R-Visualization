@@ -25,10 +25,41 @@ group_colors <- setNames(color_df$color, color_df$group) # 将颜色信息转换
 # 读取树并分组
 tree_grouped <- groupOTU(WGS_tree, group_list)
 
-# 绘制系统发育树
-p0 <-ggtree(tree_grouped, aes(color = group), layout = 'fan',open.angle = 5, lwd = 0.25) +
-  scale_color_manual(values = group_colors)
 
+#* 计算从节点到叶子的距离（树的高度 - 节点深度）
+#? BEAST等软件不需要计算，自带
+node_heights <- node.depth.edgelength(WGS_tree)
+max_height <- max(node_heights)
+node_to_tip_distance <- max_height - node_heights
+
+#*===================================================================================
+#* 使用ggtree绘制系统发育树
+p0 <-ggtree(tree_grouped, aes(color = group), layout = 'rectangular',open.angle = 5, lwd = 0.2) +
+  scale_color_manual(values = group_colors) +
+  geom_tiplab(size = 0.5, align = TRUE,hjust = -0.5) + #* 添加tiplab，默认显示`label`
+  geom_nodepoint(size=0.3) +   #* 添加nodepoint
+  geom_nodelab(aes(label=round(branch.length, 3)), hjust=-0.3, size=0.7) + #* 显示branch.length
+  geom_nodelab(aes(label=round(node_to_tip_distance[node], 3)), hjust=1, color="#000000", size=0.7) + #*显示树的高度（到叶子节点的距离）
+  theme_tree2() + # 显示坐标轴
+  theme(
+    axis.text.x = element_text(size = 2),    # x轴刻度文字大小
+    axis.title.x = element_text(size = 2),    # x轴标题文字大小
+    axis.text.y = element_text(size = 2),    # y轴刻度文字大小
+    axis.title.y = element_text(size = 2)     # y轴标题文字大小
+  ) +
+  scale_x_continuous(
+    expand = expansion(mult = c(0.02, 0.03)),
+    breaks = seq(0, max(node_heights), by = 5000), #* 每5000年一个刻度，自行修改以对应不同的时间树
+    labels = function(x) format(round(x), big.mark=","), #* 添加千位分隔符
+    name = "Time (years ago)"
+  ) + #* 扩展x轴空间，左边2%，右边3%
+  scale_y_continuous(expand = expansion(mult = c(0.01, 0.01))) + #* 扩展y轴空间，上下各1%
+  geom_vline(xintercept = seq(0, max(node_heights), by = 5000), 
+             color = "#1c9cc6", linetype = "solid", alpha = 0.3, linewidth = 0.05) + # 每5000年一条细红线
+  geom_vline(xintercept = seq(0, max(node_heights), by = 10000), 
+             color = "#196c88", linetype = "solid", alpha = 0.5, linewidth = 0.1)   # 每10000年一条粗蓝线
+
+ggsave(p0, filename = '../output/系统发育树.pdf', units = "cm", height = 20 ,width = 15 )
 #*===================================================================================
 
 ##* 使用ggtreeExtra美化
