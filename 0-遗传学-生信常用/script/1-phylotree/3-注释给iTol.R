@@ -2,7 +2,7 @@
 library(dplyr)  # 加载dplyr包，用于数据处理和管道操作
 library(itol.toolkit)  # 加载itol.toolkit包，用于制作和管理iTOL树图的数据单元
 library(data.table)  # 加载data.table包，提供高效的数据读取和操作功能
-# # install.packages("pak")
+# install.packages("pak")
 # # 安装pkgbuild包
 # pkgbuild::check_build_tools(debug = TRUE)
 
@@ -12,44 +12,45 @@ library(data.table)  # 加载data.table包，提供高效的数据读取和操�
 # # from GitHub
 # pak::pak('TongZhou2017/itol.toolkit')
 # 设置工作目录
-setwd("C:/Users/Administrator/Desktop")  # 将当前R会话的工作目录设置为指定路径
+setwd("/mnt/c/Users/Administrator/Desktop")  # 将当前R会话的工作目录设置为指定路径
 
-tree_1 <- "C:/Users/Administrator/Desktop/merged_dedup_biallelic.SNP.fasta.tree"  # 指定新克文件的路径，这个文件包含树的信息
+tree_1 <- "/mnt/c/Users/Administrator/Desktop/ML_tree.treefile"  # 指定新克文件的路径，这个文件包含树的信息
 hub_1 <- create_hub(tree_1)  # 创建一个以此树为中心的hub，用于添加不同的数据单元
-data_file_1 <- "C:/Users/Administrator/Desktop/HP数据收集.csv"  # 指定元数据文件的路径
+data_file_1 <- "/mnt/c/Users/Administrator/Desktop/Lable.csv"  # 指定元数据文件的路径
 data_1 <- data.table::fread(data_file_1,header = TRUE)  # 使用data.table的fread函数读取元数据文件
+
 
 #############################功能1################################################
 # 为树的节点添加标签，按属分类
-unit_1 <- create_unit(data = data_1 %>% select(ID, ML_NAME),  # 从data_1中选取ID和Genus列
+unit_1 <- create_unit(data = data_1 %>% select(ID, Lable),  # 从data_1中选取ID和Genus列
                       key = "itol_3al_1_labels",  # 为这个单元设置一个键名
                       type = "LABELS",  # 设置数据单元的类型为标签
                       tree = tree_1)  # 指定这个单元关联的树文件
-write_unit(unit_1, paste0(getwd(), "/Rename.txt"))  # 将单元写入文件
+write_unit(unit_1, paste0(getwd(), "/label.txt"))  # 将单元写入文件
 
 #############################功能2################################################
 # 为树的分支添加颜色，按门分类
-unit_2 <- create_unit(data = data_1 %>% select(ID, Classification_Chromopaniter_Detail),
+unit_2 <- create_unit(data = data_1 %>% select(ID, Lable),
                       key = "itol_3al_2_range",
                       type = "TREE_COLORS",  # 设置类型为树颜色
                       subtype = "branch",  # 子类型为范围，表示颜色将根据指定的范围变化
                       tree = tree_1)
-write_unit(unit_2, paste0(getwd(), "/HAP.txt"))
+write_unit(unit_2, paste0(getwd(), "/color.txt"))
 
 #############################功能3################################################
 # 为树添加颜色条带，按綱分类
 set.seed(123)  # 设置随机数种子，确保颜色选择的可重复性
-unit_3 <- create_unit(data = data_1 %>% select(ID, Chromopainter4),
+unit_3 <- create_unit(data = data_1 %>% select(ID, Lable),
                       key = "itol_3al_3_strip",
                       type = "DATASET_COLORSTRIP",  # 设置类型为颜色条带
                       color = "wesanderson",  # 使用Wes Anderson调色板
                       tree = tree_1)
 unit_3@common_themes$basic_theme$margin <- 10  # 设置条带的边缘空白
-write_unit(unit_3, paste0(getwd(), "/Chromopainter4_strip_Class.txt"))
+write_unit(unit_3, paste0(getwd(), "/Lable_strip_Class.txt"))
 
 #############################功能4################################################
 # 添加柱状图，表示某个数值特征
-unit_4 <- create_unit(data = data_1 %>% select(NAME,NUMBER_CHIP),
+unit_4 <- create_unit(data = data_1 %>% select(ID,QC_Haplogrep),
                       key = "itol_3al_4_simplebar",
                       type = "DATASET_SIMPLEBAR",  # 类型为简单柱状图
                       tree = tree_1)
@@ -67,7 +68,7 @@ write_unit(unit_5, paste0(getwd(), "/itol_3al_5_multibar.txt"))
 
 #############################功能6################################################
 # 添加梯度色柱状图，用于展示数据的变化
-unit_6 <- create_unit(data = data_1 %>% select(ID, Elevation),
+unit_6 <- create_unit(data = data_1 %>% select(ID, QC_Haplogrep),
                       key = "itol_3al_6_gradient",
                       type = "DATASET_GRADIENT",  # 类型为渐变数据集
                       tree = tree_1)
@@ -129,7 +130,7 @@ write_unit(unit_colors, paste0(getwd(), "/itol_random_class_colors.txt"))
 #############################功能9################################################
 #############################功能9################################################
 # 形状：1 矩形，2 圆形，3星形，4右边尖的三角形，5左边尖的三角形，6勾
-unit_9 <- create_unit(data = data_1 %>%  select(ID, Host_species),
+unit_9 <- create_unit(data = data_1 %>%  select(ID, Lable),
                       key = "Sample_Symbols", 
                       shape = 4,
                       type = "DATASET_SYMBOL",
