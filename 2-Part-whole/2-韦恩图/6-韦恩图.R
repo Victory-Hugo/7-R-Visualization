@@ -3,7 +3,7 @@ library(venn)         #韦恩图（venn 包，适用样本数 2-7）
 library(VennDiagram) 
 setwd('/mnt/c/Users/Administrator/Desktop/')
 # 读取数据文件
-venn_dat <- read.delim('/mnt/d/幽门螺旋杆菌/Script/分析结果/2-变异统计/output/比较东亚和全球/var/df_Venn_Indel_Common.csv',sep = ',') # 每一列是一个集合,可以是一列数字，也可以是一列字符
+venn_dat <- read.delim('df_Venn.csv',sep = ',') # 每一列是一个集合,可以是一列数字，也可以是一列字符
 number_set <- 2 #todo 输入共有多少列，即多少种集合
 
 # 动态生成venn_list
@@ -13,8 +13,8 @@ venn_list = purrr::map(venn_list,na.omit)      # 删除列表中每个向量中�
 
 #作图
 # 直接用 ilabels = "counts" 自动显示每个区域的计数
-dev.off() # 关闭之前的图形设备
-# 如果没有图形设备打开，可以忽略此行
+# 如已有打开的设备先关闭，否则跳过
+if (!is.null(dev.list())) dev.off()
 pdf("venn_plot1.pdf", width = 10, height = 10) # 保存为PDF文件
 venn(
   x       = venn_list,
@@ -38,6 +38,4 @@ inter <- get.venn.partitions(venn_list)
 for (i in 1:nrow(inter)) inter[i,'values'] <- paste(inter[[i,'..values..']], collapse = '|')
 inter <- subset(inter, select = -..values.. )
 inter <- subset(inter, select = -..set.. )
-write.table(inter, "result.csv", row.names = FALSE, sep = ',', quote = FALSE)
 
-# 代码二
