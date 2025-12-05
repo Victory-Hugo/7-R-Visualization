@@ -18,7 +18,7 @@ library(ggtext)       # 更丰富的主题元素
 # 行名 = 群体/样本，列名 = 指标或变量名
 
 auto_data <- read.csv(
-  "/mnt/f/OneDrive/文档（科研）/脚本/Download/7-R-Visualization/0-遗传学-生信常用/data/1-Frequency.csv",
+  "/mnt/f/OneDrive/文档（科研）/脚本/Download/7-R-Visualization/4-Correlation/1-LinkET/1-Frequency.csv",
   row.names    = 1,    # 第一列作为行名
   header       = TRUE, # 第一行是表头
   sep          = ",",
@@ -26,7 +26,7 @@ auto_data <- read.csv(
 )
 
 haplo_data <- read.csv(
-  "/mnt/f/OneDrive/文档（科研）/脚本/Download/7-R-Visualization/0-遗传学-生信常用/data/2-Geographic.csv",
+  "/mnt/f/OneDrive/文档（科研）/脚本/Download/7-R-Visualization/4-Correlation/1-LinkET/2-Geographic.csv",
   row.names    = 1,
   header       = TRUE,
   sep          = ",",
